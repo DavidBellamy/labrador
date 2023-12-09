@@ -1,0 +1,6 @@
+rep,fraction,method,test_ce
+0,1,xgboost,0.38506246
+1,1,xgboost,0.5035922
+2,1,xgboost,0.3706167
+3,1,xgboost,0.42471105
+4,1,xgboost,0.41222978

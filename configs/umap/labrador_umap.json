@@ -1,0 +1,13 @@
+{
+  "data_path": "data/processed/labrador_test_bags.jsonl",
+  "random_seed": 3141592,
+  "saved_model_path": "model_weights/labrador",
+  "outfile_dir": "data/embeddings",
+  "outfile_name": "umap_labrador",
+  "num_bags_of_labs_to_umap": 50000,
+  "forward_pass_batch_size": 512,
+  "umap_parameters": {
+    "umap_n_neighbors": [600],
+    "umap_min_dist": [0.99]
+  }
+}

@@ -1,0 +1,6 @@
+rep,test_mse,method
+besthp_test_loss_fraction1.00_rep4,5.318111075,labrador_ablation
+besthp_test_loss_fraction1.00_rep3,8.987879438,labrador_ablation
+besthp_test_loss_fraction1.00_rep2,7.847854245,labrador_ablation
+besthp_test_loss_fraction1.00_rep1,6.553105424,labrador_ablation
+besthp_test_loss_fraction1.00_rep0,8.925682415,labrador_ablation

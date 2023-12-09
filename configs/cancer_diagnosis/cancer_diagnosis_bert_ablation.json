@@ -1,0 +1,28 @@
+{
+  "system_config": {"wandb_project_name": "cancer_diagnosis_bert194M",
+                 "use_wandb": "True",
+                 "wandb_mode": "offline",
+                 "saved_model_path": "model_weights/",
+                 "results_path": "data/results/cancer_diagnosis/",
+                 "dataset_dir": "data/evaluations",
+                 "processed_data_dir": "data/processed",
+                 "dataset_name": "cancer_diagnosis_bert_data.npz",
+                 "codebook_path": "data/processed/labcode_codebook_bert.csv",
+                 "ecdf_path": "data/processed/mimic4_ecdfs.npz",
+                 "run_eagerly": "False",
+                 "random_seed":  3141592},
+
+  "train_config": {"num_reps": 5,
+                  "num_k_folds": 5,
+                "num_epochs": [30, 60, 90],
+                "learning_rate": [1e-4, 3e-4, 5e-4, 1e-3],
+                "batch_size": [16, 32, 64],
+                "dropout_rate": [0.1, 0.3, 0.5, 0.7],
+                "train_base_model": "False",
+                "add_extra_dense_layer": "True",
+                "output_activation": "softmax",
+                "skip_cross_validation": "False",
+                "loss_function": "sparse_categorical_crossentropy"},
+
+    "outfile_name_root": "cancer_diagnosis_covid_diagnosis_bert194M"
+}

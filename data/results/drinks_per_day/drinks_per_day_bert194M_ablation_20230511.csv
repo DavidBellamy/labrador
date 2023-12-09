@@ -1,0 +1,7 @@
+rep,method,test_mse
+0,bert194M_ablation,11.281044832313906
+1,bert194M_ablation,6.073231664707556
+2,bert194M_ablation,5.833090432860134
+3,bert194M_ablation,9.87939581651228
+4,"bert194M_ablation
+",4.393733825569825

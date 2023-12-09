@@ -1,0 +1,29 @@
+{
+  "system_config": {"wandb_project_name": "drinks_per_day_bert194M",
+                 "use_wandb": "True",
+                 "wandb_mode": "offline",
+                 "saved_model_path": "model_weights/",
+                 "results_path": "data/results/drinks_per_day/",
+                 "dataset_dir": "data/evaluations",
+                 "transformer_dir": "bert194M",
+                 "processed_data_dir": "data/processed",
+                 "dataset_name": "drinks_per_day_bert_inputs.npz",
+                 "codebook_path": "data/processed/labcode_codebook_bert.csv",
+                 "ecdf_path": "data/processed/mimic4_ecdfs.npz",
+                 "run_eagerly": "False",
+                 "random_seed":  3141592},
+
+  "train_config": {"num_reps": 5,
+                  "num_k_folds": 5,
+                "num_epochs": [30, 60, 90],
+                "learning_rate": [1e-4, 3e-4, 5e-4, 1e-3],
+                "batch_size": [16, 32, 64],
+                "dropout_rate": [0.1, 0.3, 0.5, 0.7],
+                "train_base_model": "False",
+                "add_extra_dense_layer": "True",
+                "output_activation": "linear",
+                "loss_function": "mean_squared_error",
+                "skip_cross_validation":  "False"},
+
+    "outfile_name_root": "drinks_per_day_bert194M"
+}

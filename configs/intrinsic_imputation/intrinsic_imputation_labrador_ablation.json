@@ -1,0 +1,13 @@
+{
+  "dataset_path": "data/processed/labrador_test_bags.jsonl",
+  "codebook_path": "data/processed/labcode_codebook_labrador.csv",
+  "output_directory": "data/results/intrinsic_imputation/",
+  "ablation": "True",
+  "num_batches": 3947,
+  "batch_size": 512,
+  "vocab_size": 529,
+  "pad_token": 0,
+  "mask_token": 530,
+  "null_token": 531,
+  "random_seed": 3141592
+}

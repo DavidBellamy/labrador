@@ -1,0 +1,14 @@
+{
+  "bert_dataset_path": "data/processed/bert_test_bags.jsonl",
+  "labrador_dataset_path": "data/processed/labrador_test_bags.jsonl",
+  "model_path": "model_weights/bert194M",
+  "codebook_path": "data/processed/labcode_codebook_bert.csv",
+  "output_directory": "data/results/intrinsic_imputation/",
+  "ablation": "False",
+  "num_batches": 3947,
+  "batch_size": 512,
+  "pad_token": 0,
+  "mask_token": 4250,
+  "softmax_ypred_conversion_method": "weighted_quantiles",
+  "random_seed": 3141592
+}

@@ -1,0 +1,6 @@
+rep,test_mse,method
+0,10.42556173,bert68M_ablation
+1,6.380160089,bert68M_ablation
+2,6.023025945,bert68M_ablation
+3,9.16981362,bert68M_ablation
+4,4.926419948,bert68M_ablation

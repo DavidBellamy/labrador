@@ -1,0 +1,6 @@
+rep,fraction,method,test_ce
+0,1,logistic_regression,0.441206469
+1,1,logistic_regression,0.52852802
+2,1,logistic_regression,0.433803553
+3,1,logistic_regression,0.457155671
+4,1,logistic_regression,0.447005417

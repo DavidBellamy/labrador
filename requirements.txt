@@ -1,0 +1,13 @@
+huggingface-hub
+matplotlib
+numpy
+pandas
+scikit-learn
+seaborn
+statsmodels
+tensorflow
+transformers
+tqdm
+umap-learn
+wandb
+xgboost

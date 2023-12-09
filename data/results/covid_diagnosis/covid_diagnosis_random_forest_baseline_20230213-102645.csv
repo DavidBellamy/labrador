@@ -1,0 +1,6 @@
+rep,fraction,method,test_ce
+0,1,random_forest,0.403537437
+1,1,random_forest,0.487216556
+2,1,random_forest,0.416103176
+3,1,random_forest,0.431531015
+4,1,random_forest,0.41488855
