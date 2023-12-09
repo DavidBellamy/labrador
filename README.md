@@ -43,7 +43,7 @@ pyenv install 3.10.0
 
 **Clone this GitHub repository**
 ```bash
-git clone https://github.com/
+git clone https://github.com/DavidBellamy/labrador
 ```
 
 **Virtual environment**
