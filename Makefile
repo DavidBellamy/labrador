@@ -14,11 +14,42 @@ unittests:
 	python -m unittest discover -s tests
 
 # Username from Physionet, which grants permission to access the MIMIC-IV database
-physionet_username = davidbellamy
+physionet_username ?=
 
-# Optional: download the raw MIMIC-IV data using wget (warning: large files)
+mimic_files = \
+	hosp/labevents.csv.gz \
+	hosp/d_labitems.csv.gz \
+	core/admissions.csv.gz \
+	core/patients.csv.gz
+
+# Tool to use for downloading (default is wget, can be overridden by setting the tool variable)
+tool ?= wget
+
+# Optional: download the raw MIMIC-IV data using the specified tool (warning: large files)
 mimic_data:
-	wget -r -N -c -np --user $(physionet_username) --ask-password https://physionet.org/files/mimiciv/1.0/ --directory-prefix=$(raw_data_dir)
+	mkdir -p $(raw_data_dir)
+ifeq ($(tool), wget)
+	@if [ -z "$(physionet_username)" ]; then \
+		echo "Error: physionet_username is not set. Please provide a username to access the MIMIC-IV dataset"; \
+		exit 1; \
+	fi
+	for file in $(mimic_files); do \
+		wget -r -N -c -np --user $(physionet_username) --ask-password --directory-prefix=$(raw_data_dir) https://physionet.org/files/mimiciv/1.0/$$file; \
+		gunzip -v $(raw_data_dir)/$$(basename $$file); \
+	done
+else ifeq ($(tool), gsutil)
+	@if [ -z "$(google_project_id)" ]; then \
+		echo "Error: google_project_id is not set. Please provide a project id to access the MIMIC-IV dataset"; \
+		exit 1; \
+	fi
+	for file in $(mimic_files); do \
+		gsutil -u $(google_project_id) cp gs://mimiciv-1.0.physionet.org/$$file $(raw_data_dir); \
+		gunzip -v $(raw_data_dir)/$$(basename $$file); \
+	done
+else
+	@echo "Error: Unsupported tool. Use 'wget' or 'gsutil'."
+	@exit 1
+endif
 
 #################################################################################
 # Project Settings                                                              #

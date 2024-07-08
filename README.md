@@ -31,7 +31,7 @@ We recommend using [pyenv](https://github.com/pyenv/pyenv) to manage Python vers
 
 ```bash
 brew update
-brew install git, make, pyenv
+brew install git make pyenv gzip
 pyenv init
 ```
 
@@ -86,7 +86,32 @@ The data used to pre-train Labrador are a subset of the [MIMIC-IV](https://mimic
 * `patients.csv`
 * `d_labitems.csv`
 
-The data used in the sepsis mortality prediction evaluation are also derived from the MIMIC-IV dataset. [Our paper]() describes how we constructed the evaluation dataset from the raw data.
+## Directly from PhysioNet
+
+These files could be downloaded by singing the usage agreement on [MIMIC-IV page on PhysioNet](https://physionet.org/content/mimiciv/1.0/) and executing following command
+```bash
+make mimic_data physionet_username=*insert_your_username*
+```
+The download speed from the PhysioNet is usually quite low, so it may take a few hours to download.
+
+## From Google Cloud
+
+Alternatively, the data could be downloaded few hundred times faster from Google cloud, but this requires some additional setup.
+1. Connect your PhysioNet to your Google account in [Cloud Settings](https://physionet.org/settings/cloud/)
+2. [Request](https://physionet.org/projects/mimiciv/1.0/request_access/3) a Google Cloud access to the dataset
+3. Setup Google Cloud Project and [billing](https://cloud.google.com/billing/docs/how-to/manage-billing-account) account
+4. Install [`google-cloud-sdk`](https://cloud.google.com/sdk/docs/install)
+5. Authenticate with `gcloud auth login` in the terminal
+6. Run `make mimic_data google_project_id=*your_project_id* tool=gsutil`
+
+
+## Downstream tasks data
+
+The data used in the sepsis mortality prediction evaluation are also derived from the MIMIC-IV dataset. You can download sepsis cohort data via Google BigQuery:
+```sql
+SELECT `subject_id`, `stay_id`, `sofa_time`, `sofa_score` FROM `physionet-data.mimiciv_derived.sepsis3`;
+```
+The resulting table should be saved as `data/raw/mimic4_sepsis_cohort.csv`
 
 The data we used for the cancer diagnosis, COVID-19 diagnosis and elevated alcohol consumption prediction evaluations are open source so we share it directly in `data/`.
 
