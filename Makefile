@@ -181,6 +181,8 @@ labrador_val_tfrecords: labrador_special_tokens
 # Pre-processing the Evaluation Data                                            #
 #################################################################################
 
+evaluation_data: cancer_baseline_data cancer_transformer_data covid_baseline_data covid_transformer_data alcohol_transformer_data sepsis_jsonlines sepsis_baseline_data sepsis_transformer_data
+
 cancer_baseline_data:
 	python scripts/preprocessing/cancer_diagnosis_baselines_data.py
 
