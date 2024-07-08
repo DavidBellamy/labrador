@@ -151,30 +151,30 @@ labrador_val_tfrecords: labrador_special_tokens
 #################################################################################
 
 cancer_baseline_data:
-	python scripts/preprocessing/cancer_diagnosis_baselines.data.py 
+	python scripts/preprocessing/cancer_diagnosis_baselines_data.py
 
 cancer_transformer_data: labrador_special_tokens
-	python scripts/preprocessing/cancer_diagnosis_transformer.data.py \
+	python scripts/preprocessing/cancer_diagnosis_transformer_data.py \
 		$(evaluation_data_dir) \
 		$(processed_data_dir)/mimic4_ecdfs.npz \
 		Disease \
 		$(processed_data_dir)/labcode_codebook_labrador.csv \
-		$(processed_data_dir)/labcode_codebook_bert.csv \	
+		$(processed_data_dir)/labcode_codebook_bert.csv \
 		$(NULL_TOKEN)
 
 covid_baseline_data:
-	python scripts/preprocessing/covid_diagnosis_baselines.data.py \
+	python scripts/preprocessing/covid_diagnosis_baselines_data.py \
 		$(raw_data_dir) \
 		$(evaluation_data_dir)
 
 covid_transformer_data: labrador_special_tokens
-	python scripts/preprocessing/covid_diagnosis_transformer.data.py \
+	python scripts/preprocessing/covid_diagnosis_transformer_data.py \
 		$(raw_data_dir) \
 		$(evaluation_data_dir) \
 		$(processed_data_dir)/mimic4_ecdfs.npz \
-		Target \
+		target \
 		$(processed_data_dir)/labcode_codebook_labrador.csv \
-		$(processed_data_dir)/labcode_codebook_bert.csv \	
+		$(processed_data_dir)/labcode_codebook_bert.csv \
 		$(NULL_TOKEN)
 
 alcohol_transformer_data:
@@ -186,7 +186,7 @@ sepsis_jsonlines:
 		$(processed_data_dir)
 
 sepsis_baseline_data:
-	python scripts/preprocessing/sepsis_make_baselines_data.py \
+	python scripts/preprocessing/sepsis_mortality_baselines_data.py \
 		$(processed_data_dir) \
 		$(evaluation_data_dir)
 
@@ -196,7 +196,7 @@ sepsis_transformer_data: labrador_special_tokens
 		$(evaluation_data_dir) \
 		$(processed_data_dir)/mimic4_ecdfs.npz \
 		$(processed_data_dir)/labcode_codebook_labrador.csv \
-		$(processed_data_dir)/labcode_codebook_bert.csv \	
+		$(processed_data_dir)/labcode_codebook_bert.csv \
 		$(NULL_TOKEN)
 
 #################################################################################
@@ -253,11 +253,13 @@ cancer_xgboost_evaluation:
 
 cancer_labrador_evaluation:
 	python scripts/evaluations/cancer_diagnosis_labrador.py \
-		configs/cancer_diagnosis/cancer_diagnosis_labrador.json
+		configs/cancer_diagnosis/cancer_diagnosis_labrador.json \
+		1
 
 cancer_bert_evaluation:
 	python scripts/evaluations/cancer_diagnosis_bert.py \
-		configs/cancer_diagnosis/cancer_diagnosis_bert.json
+		configs/cancer_diagnosis/cancer_diagnosis_bert.json \
+		1
 
 covid_logreg_evaluation:
 	python scripts/evaluations/covid_diagnosis_logistic_regression_baseline.py \
@@ -374,7 +376,7 @@ umap_bert:
 
 labrador_special_tokens:
 # Path to the codebook (this is created by the recipe: make json_lines)
-	$(eval codebook = $(addprefix $(processed_data_dir), labcode_codebook_labrador.csv))
+	$(eval codebook = $(addprefix $(processed_data_dir), /labcode_codebook_labrador.csv))
 # Compute vocab_size based on the codebook's length
 	$(eval VOCAB_SIZE = $(shell echo $(shell wc -l < $(codebook)) - 1 | bc))
 
@@ -385,7 +387,7 @@ labrador_special_tokens:
 
 bert_special_tokens:
 # Path to the codebook (this is created by the recipe: make json_lines)
-	$(eval codebook = $(addprefix $(processed_data_dir), labcode_codebook_bert.csv))
+	$(eval codebook = $(addprefix $(processed_data_dir), /labcode_codebook_bert.csv))
 # Compute vocab_size based on the codebook's length
 	$(eval VOCAB_SIZE = $(shell echo $(shell wc -l < $(codebook)) - 1 | bc))
 
