@@ -41,6 +41,7 @@ class TestLabrador(unittest.TestCase):
         self.model_target_directory = os.path.join(
             repo_root_directory, "tests/test_models"
         )
+        os.makedirs(self.model_target_directory, exist_ok=True)
 
     def tearDown(self) -> None:
         # Clear the contents of test/test_models
@@ -181,7 +182,7 @@ class TestLabrador(unittest.TestCase):
         self.assertIsInstance(train_categorical_loss, tf.Tensor)
         self.assertIsInstance(train_continuous_loss, tf.Tensor)
         self.assertEqual(train_continuous_loss, 0)
-        self.assertEqual(train_categorical_loss, 1.2282637414393478)
+        self.assertAlmostEqual(train_categorical_loss.numpy(), 1.2282637414393478)
 
     def test_labrador_finetuning_wrapper(self):
         model_wrapper = LabradorFinetuneWrapper(
