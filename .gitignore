@@ -139,3 +139,7 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
+
+
+# Private dataset
+/data/raw/mimic4_sepsis_cohort.csv

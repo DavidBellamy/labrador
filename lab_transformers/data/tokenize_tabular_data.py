@@ -27,7 +27,7 @@ class mimic4_eCDFer:
         self,
         itemids: Union[Iterable[int], NDArray[np.int_]],
         lab_values: Union[Iterable[float], NDArray[np.float_]],
-        null_token: Union[int, np.nan] = np.nan,
+        null_token: Union[int, float] = np.nan,
     ) -> NDArray[np.float_]:
         """
         Returns Pr(X <= x) for all x in lab_values.

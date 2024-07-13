@@ -46,6 +46,7 @@ class TestBERT(unittest.TestCase):
         self.model_target_directory = os.path.join(
             repo_root_directory, "tests/test_models"
         )
+        os.makedirs(self.model_target_directory, exist_ok=True)
 
     def tearDown(self) -> None:
         # Clear the contents of test/test_models

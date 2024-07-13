@@ -14,11 +14,42 @@ unittests:
 	python -m unittest discover -s tests
 
 # Username from Physionet, which grants permission to access the MIMIC-IV database
-physionet_username = davidbellamy
+physionet_username ?=
 
-# Optional: download the raw MIMIC-IV data using wget (warning: large files)
+mimic_files = \
+	hosp/labevents.csv.gz \
+	hosp/d_labitems.csv.gz \
+	core/admissions.csv.gz \
+	core/patients.csv.gz
+
+# Tool to use for downloading (default is wget, can be overridden by setting the tool variable)
+tool ?= wget
+
+# Optional: download the raw MIMIC-IV data using the specified tool (warning: large files)
 mimic_data:
-	wget -r -N -c -np --user $(physionet_username) --ask-password https://physionet.org/files/mimiciv/1.0/ --directory-prefix=$(raw_data_dir)
+	mkdir -p $(raw_data_dir)
+ifeq ($(tool), wget)
+	@if [ -z "$(physionet_username)" ]; then \
+		echo "Error: physionet_username is not set. Please provide a username to access the MIMIC-IV dataset"; \
+		exit 1; \
+	fi
+	for file in $(mimic_files); do \
+		wget -r -N -c -np --user $(physionet_username) --ask-password --directory-prefix=$(raw_data_dir) https://physionet.org/files/mimiciv/1.0/$$file; \
+		gunzip -v $(raw_data_dir)/$$(basename $$file); \
+	done
+else ifeq ($(tool), gsutil)
+	@if [ -z "$(google_project_id)" ]; then \
+		echo "Error: google_project_id is not set. Please provide a project id to access the MIMIC-IV dataset"; \
+		exit 1; \
+	fi
+	for file in $(mimic_files); do \
+		gsutil -u $(google_project_id) cp gs://mimiciv-1.0.physionet.org/$$file $(raw_data_dir); \
+		gunzip -v $(raw_data_dir)/$$(basename $$file); \
+	done
+else
+	@echo "Error: Unsupported tool. Use 'wget' or 'gsutil'."
+	@exit 1
+endif
 
 #################################################################################
 # Project Settings                                                              #
@@ -150,31 +181,33 @@ labrador_val_tfrecords: labrador_special_tokens
 # Pre-processing the Evaluation Data                                            #
 #################################################################################
 
+evaluation_data: cancer_baseline_data cancer_transformer_data covid_baseline_data covid_transformer_data alcohol_transformer_data sepsis_jsonlines sepsis_baseline_data sepsis_transformer_data
+
 cancer_baseline_data:
-	python scripts/preprocessing/cancer_diagnosis_baselines.data.py 
+	python scripts/preprocessing/cancer_diagnosis_baselines_data.py
 
 cancer_transformer_data: labrador_special_tokens
-	python scripts/preprocessing/cancer_diagnosis_transformer.data.py \
+	python scripts/preprocessing/cancer_diagnosis_transformer_data.py \
 		$(evaluation_data_dir) \
 		$(processed_data_dir)/mimic4_ecdfs.npz \
 		Disease \
 		$(processed_data_dir)/labcode_codebook_labrador.csv \
-		$(processed_data_dir)/labcode_codebook_bert.csv \	
+		$(processed_data_dir)/labcode_codebook_bert.csv \
 		$(NULL_TOKEN)
 
 covid_baseline_data:
-	python scripts/preprocessing/covid_diagnosis_baselines.data.py \
+	python scripts/preprocessing/covid_diagnosis_baselines_data.py \
 		$(raw_data_dir) \
 		$(evaluation_data_dir)
 
 covid_transformer_data: labrador_special_tokens
-	python scripts/preprocessing/covid_diagnosis_transformer.data.py \
+	python scripts/preprocessing/covid_diagnosis_transformer_data.py \
 		$(raw_data_dir) \
 		$(evaluation_data_dir) \
 		$(processed_data_dir)/mimic4_ecdfs.npz \
-		Target \
+		target \
 		$(processed_data_dir)/labcode_codebook_labrador.csv \
-		$(processed_data_dir)/labcode_codebook_bert.csv \	
+		$(processed_data_dir)/labcode_codebook_bert.csv \
 		$(NULL_TOKEN)
 
 alcohol_transformer_data:
@@ -186,7 +219,7 @@ sepsis_jsonlines:
 		$(processed_data_dir)
 
 sepsis_baseline_data:
-	python scripts/preprocessing/sepsis_make_baselines_data.py \
+	python scripts/preprocessing/sepsis_mortality_baselines_data.py \
 		$(processed_data_dir) \
 		$(evaluation_data_dir)
 
@@ -196,7 +229,7 @@ sepsis_transformer_data: labrador_special_tokens
 		$(evaluation_data_dir) \
 		$(processed_data_dir)/mimic4_ecdfs.npz \
 		$(processed_data_dir)/labcode_codebook_labrador.csv \
-		$(processed_data_dir)/labcode_codebook_bert.csv \	
+		$(processed_data_dir)/labcode_codebook_bert.csv \
 		$(NULL_TOKEN)
 
 #################################################################################
@@ -253,11 +286,13 @@ cancer_xgboost_evaluation:
 
 cancer_labrador_evaluation:
 	python scripts/evaluations/cancer_diagnosis_labrador.py \
-		configs/cancer_diagnosis/cancer_diagnosis_labrador.json
+		configs/cancer_diagnosis/cancer_diagnosis_labrador.json \
+		1
 
 cancer_bert_evaluation:
 	python scripts/evaluations/cancer_diagnosis_bert.py \
-		configs/cancer_diagnosis/cancer_diagnosis_bert.json
+		configs/cancer_diagnosis/cancer_diagnosis_bert.json \
+		1
 
 covid_logreg_evaluation:
 	python scripts/evaluations/covid_diagnosis_logistic_regression_baseline.py \
@@ -374,7 +409,7 @@ umap_bert:
 
 labrador_special_tokens:
 # Path to the codebook (this is created by the recipe: make json_lines)
-	$(eval codebook = $(addprefix $(processed_data_dir), labcode_codebook_labrador.csv))
+	$(eval codebook = $(addprefix $(processed_data_dir), /labcode_codebook_labrador.csv))
 # Compute vocab_size based on the codebook's length
 	$(eval VOCAB_SIZE = $(shell echo $(shell wc -l < $(codebook)) - 1 | bc))
 
@@ -385,7 +420,7 @@ labrador_special_tokens:
 
 bert_special_tokens:
 # Path to the codebook (this is created by the recipe: make json_lines)
-	$(eval codebook = $(addprefix $(processed_data_dir), labcode_codebook_bert.csv))
+	$(eval codebook = $(addprefix $(processed_data_dir), /labcode_codebook_bert.csv))
 # Compute vocab_size based on the codebook's length
 	$(eval VOCAB_SIZE = $(shell echo $(shell wc -l < $(codebook)) - 1 | bc))
 
